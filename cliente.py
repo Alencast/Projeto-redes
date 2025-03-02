@@ -14,7 +14,7 @@ class Cliente:
         self.servidor_ip = None
         self.servidor_porta = None
         self.zeroconf = Zeroconf()
-        self.client_private_key = None  # Será gerada durante o handshake
+        self.client_private_key = None  #  gerada durante o handshake
 
     def localizar_servidor(self):
         """Procura pelo servidor usando mDNS."""
@@ -33,10 +33,10 @@ class Cliente:
             print("❌ Nenhum servidor encontrado. Verifique se o servidor está rodando.")
 
     def diffie_hellman_handshake(self, sock):
-        # Recebe a chave pública do servidor
+    
         server_public_bytes = sock.recv(1024)
         server_public_key = serialization.load_pem_public_key(server_public_bytes)
-        # Utiliza os parâmetros do servidor para gerar a chave do cliente
+      
         parameters = server_public_key.parameters()
         self.client_private_key = parameters.generate_private_key()
         client_public_bytes = self.client_private_key.public_key().public_bytes(
