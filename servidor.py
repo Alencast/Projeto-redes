@@ -115,7 +115,7 @@ class Servidor:
     def comando_interativo(self):
         while True:
             print("\nDigite 'listar' para ver os PCs conectados,")
-            print("ou 'detalhar <número>' para ver os detalhes de um PC,")
+            print("ou 'detalhar [número do indice no listar (0,1,2...)]' para ver os detalhes de um PC conectado,")
             print("ou 'sair' para encerrar o comando interativo.")
             comando = input("Comando: ").strip().lower()
             if comando == "listar":
