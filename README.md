@@ -1,6 +1,14 @@
 <div align="center">
   <h1>Monitoramento Remoto de Computadores 🌐💻</h1> 
   <p>Um sistema de monitoramento remoto utilizando Python, criptografia Diffie-Hellman e multicastDNS.</p>
+  <div style = "display:flex"> 
+    <p>Integrandes: </p>
+    <ul>
+      <li>Robson Alves de Alencastro</li>
+      <li>Lucas de Moraes dos Santos</li>
+    </ul>
+  </div>
+ 
 </div>
 
 ---
