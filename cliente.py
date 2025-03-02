@@ -13,7 +13,7 @@ class Cliente:
         self.zeroconf = Zeroconf()
 
     def localizar_servidor(self):
-        """Procura automaticamente pelo servidor usando mDNS"""
+        """Procura pelo servidor usando mDNS"""
         def on_service_state_change(zeroconf, service_type, name, state_change):
             if state_change == ServiceStateChange.Added:
                 info = zeroconf.get_service_info(service_type, name)
@@ -32,7 +32,7 @@ class Cliente:
             print("❌ Nenhum servidor encontrado. Verifique se o servidor está rodando.")
 
     def coletar_dados(self):
-        """Coleta os dados reais da máquina usando psutil"""
+        """Coleta os dados da máquina usando psutil"""
         dados = {
             "cpus": psutil.cpu_count(),
             "ram_livre": psutil.virtual_memory().available // (1024 * 1024),
@@ -42,7 +42,7 @@ class Cliente:
         return dados
 
     def obter_temperatura(self):
-        """Obtém a temperatura do processador, se disponível"""
+        """Obtém a temperatura do processador, se for possível"""
         try:
             temps = psutil.sensors_temperatures()
             if 'coretemp' in temps:
@@ -81,7 +81,7 @@ class Cliente:
         cliente_socket.close()
 
 if __name__ == "__main__":
-    chave_servidor = 'fLxieYw3a02Ysv1opfwRVo525xVt92MPU2_fdp3Rqjk='  # Insira a chave correta aqui
+    chave_servidor = 'k_ZsmWIeCqisoxttehu9rSnjVAGm2aUEVTNjsnB3KkE='  # Insira a chave correta aqui
     cliente = Cliente(chave=chave_servidor)
     cliente.localizar_servidor()
     cliente.enviar_dados()
