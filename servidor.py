@@ -2,6 +2,7 @@ import socket
 import json
 import threading
 from cryptography.fernet import Fernet
+from zeroconf import Zeroconf, ServiceInfo
 
 class Servidor:
     def __init__(self, host='0.0.0.0', porta=5000):
@@ -12,12 +13,27 @@ class Servidor:
         self.cifra = Fernet(self.chave)
 
     def iniciar(self):
+        # Criar o servidor de rede
         servidor_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         servidor_socket.bind((self.host, self.porta))
         servidor_socket.listen(5)
 
         print(f"🔵 Servidor rodando em {self.host}:{self.porta}")
         print(f"🔑 Chave de criptografia: {self.chave.decode()} (Copie para o cliente)")
+
+        # Configuração do mDNS
+        zeroconf = Zeroconf()
+        info = ServiceInfo(
+            "_computador._tcp.local.",
+            "Servidor de Computador._computador._tcp.local.",
+            addresses=[socket.inet_aton(self.host)],
+            port=self.porta,
+            properties={},
+            server="com.example.server.local."
+        )
+        zeroconf.register_service(info)
+
+        print(f"🔍 Servidor anunciado como: {info.name}")
 
         while True:
             cliente_socket, endereco = servidor_socket.accept()
