@@ -83,7 +83,7 @@ class Cliente:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((self.servidor_ip, self.servidor_porta))
 
-        # Realiza o handshake Diffie-Hellman para estabelecer a chave de criptografia
+        # handshake
         cifra = self.diffie_hellman_handshake(sock)
 
         dados = self.coletar_dados()
