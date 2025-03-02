@@ -8,13 +8,13 @@ from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.fernet import Fernet
 from zeroconf import Zeroconf, ServiceInfo
 
-class Servidor: 
+class Servidor:
     def __init__(self, host='0.0.0.0', porta=5000):
         self.host = host
         self.porta = porta
         self.clientes = {}  # Armazena os PCs conectados
         self.lock = threading.Lock()
-        # Gera parâmetros Diffie-Hellman e a chave do servidor
+        #  Diffie-Hellman pra não precisar chave do servidor manual
         parameters = dh.generate_parameters(generator=2, key_size=2048)
         self.server_private_key = parameters.generate_private_key()
         self.server_public_key = self.server_private_key.public_key()
@@ -25,7 +25,7 @@ class Servidor:
         servidor_socket.listen(5)
         print(f"🔵 Servidor rodando em {self.host}:{self.porta}")
 
-        # Anuncia o serviço via mDNS
+        #  multicast DNS
         zeroconf = Zeroconf()
         info = ServiceInfo(
             "_computador._tcp.local.",
@@ -48,31 +48,31 @@ class Servidor:
                 print(f"❌ Erro ao aceitar conexão: {e}")
 
     def diffie_hellman_handshake(self, sock):
-        # Envia a chave pública do servidor para o cliente
+       
         server_public_bytes = self.server_public_key.public_bytes(
             encoding=serialization.Encoding.PEM,
             format=serialization.PublicFormat.SubjectPublicKeyInfo
         )
         sock.sendall(server_public_bytes)
-        # Recebe a chave pública do cliente
+        
         client_public_bytes = sock.recv(1024)
         client_public_key = serialization.load_pem_public_key(client_public_bytes)
-        # Calcula a chave compartilhada
+       
         shared_key = self.server_private_key.exchange(client_public_key)
-        # Deriva uma chave simétrica a partir da chave compartilhada
+        
         derived_key = HKDF(
             algorithm=hashes.SHA256(),
             length=32,
             salt=None,
             info=b"handshake data"
         ).derive(shared_key)
-        # Fernet requer uma chave codificada em base64
+        # Fernet pra cripto
         fernet_key = base64.urlsafe_b64encode(derived_key)
         return Fernet(fernet_key)
 
     def tratar_cliente(self, cliente_socket, endereco):
         try:
-            # Realiza o handshake e obtém o objeto Fernet configurado
+            # handshake do tcpip
             cifra = self.diffie_hellman_handshake(cliente_socket)
             
             dados_cifrados = cliente_socket.recv(1024)
