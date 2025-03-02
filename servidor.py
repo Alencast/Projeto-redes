@@ -8,7 +8,7 @@ from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.fernet import Fernet
 from zeroconf import Zeroconf, ServiceInfo
 
-class Servidor:
+class Servidor: 
     def __init__(self, host='0.0.0.0', porta=5000):
         self.host = host
         self.porta = porta
