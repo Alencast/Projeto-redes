@@ -17,15 +17,16 @@ class Cliente:
             "temperatura": self.obter_temperatura()
         }
         return dados
-
+#cpu_temp = temps['coretemp'][0].current if 'coretemp' in temps else None
     def obter_temperatura(self):
-        try:
-            temps = psutil.sensors_temperatures()
-            if "coretemp" in temps:
-                return temps["coretemp"][0].current
-            return -1  # se não tiver sensor
-        except:
-            return -1
+     try:
+        temps = psutil.sensors_temperatures()
+        # Tenta acessar a temperatura da CPU, usando o 'coretemp' se disponível
+        cpu_temp = temps['coretemp'][0].current if 'coretemp' in temps else None
+        return cpu_temp if cpu_temp is not None else -1  # Retorna -1 se a temperatura não estiver disponível
+     except Exception as e:
+        print(f"❌ Erro ao obter temperatura: {e}")
+        return -1
 
     def enviar_dados(self):
         cliente_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -38,11 +39,12 @@ class Cliente:
         resposta_cifrada = cliente_socket.recv(1024)
         resposta = json.loads(self.cifra.decrypt(resposta_cifrada).decode())
 
-        # Imprimir os dados completos
+        # Imprimir os paranaues
         print(f"📊 Quantidade de Processadores: {dados['cpus']}")
         print(f"📊 Memória RAM Livre: {dados['ram_livre']} MB")
         print(f"📊 Espaço em Disco Livre: {dados['disco_livre']} GB")
-        if dados['temperatura'] != -1:
+
+        if dados['temperatura'] != -1: #-1 deu erro
             print(f"📊 Temperatura do Processador: {dados['temperatura']}°C")
         else:
             print(f"📊 Temperatura do Processador: Indisponível")
@@ -53,6 +55,6 @@ class Cliente:
         cliente_socket.close()
 
 if __name__ == "__main__":
-    chave_servidor = 'L1rgGDcr7TGULGI3__aowDBWkb9dT2tZgNUtLez400M=='  # Substitua pela chave dada no servidor
+    chave_servidor = 'UnsGhXg2x7I79TlV4260oumqwjVqwMEkcA-fqo_tGoM='  # lembrar de substituir pela chave dada no servidor
     cliente = Cliente(chave=chave_servidor)
     cliente.enviar_dados()
